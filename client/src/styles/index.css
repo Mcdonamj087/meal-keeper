@@ -1,5 +1,6 @@
-@import 'reset';
+@import '_reset';
+@import '_colors';
 
 body {
-  background: lavenderblush;
+  background: var(--color__coconut--1);
 }

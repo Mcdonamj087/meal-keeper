@@ -7,7 +7,7 @@ import {errorHandler} from './middleware/customErrorHandler';
 
 colors.enable();
 
-dotenv.config({path: '../.env'});
+dotenv.config();
 const port = process.env.PORT || 8000;
 
 connectDB();

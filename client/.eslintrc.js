@@ -12,8 +12,6 @@ module.exports = {
     'plugin:import/warnings',
     'plugin:import/typescript',
     'plugin:jsx-a11y/recommended',
-    'prettier',
-    'plugin:prettier/recommended',
   ],
   rules: {
     'no-unused-vars': 'off',
@@ -25,6 +23,11 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
   settings: {
+    'import/resolver': {
+      node: {
+        paths: ['src'], // let eslint know about absolute module imports from src
+      },
+    },
     react: {
       version: 'detect',
     },

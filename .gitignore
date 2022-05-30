@@ -1,3 +1,7 @@
+# General
 node_modules
 .env
 .key
+
+# Client
+client/build

@@ -1,7 +1,7 @@
 {
   "name": "meal-keeper",
   "version": "1.0.0",
-  "description": "An intuitive recipe app for creating, planning and sharing your favorite meals.",
+  "description": "Backend for an intuitive recipe app for creating, planning and sharing your favorite meals.",
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only server.ts"

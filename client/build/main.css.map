@@ -1,0 +1,1 @@
+{"version":3,"file":"main.css","mappings":"AAAA,kCACE,cAAe,CACf,mBAAa,CAAb,mBAAa,CAAb,YACF","sources":["webpack://meal-keeper/./src/styles.module.css"],"sourcesContent":[".background {\n  background: red;\n  display: flex;\n}\n"],"names":[],"sourceRoot":""}

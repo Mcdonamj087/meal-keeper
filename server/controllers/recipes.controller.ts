@@ -1,7 +1,7 @@
 import {Response} from 'express';
 import asyncHandler from 'express-async-handler';
 import {HydratedDocument} from 'mongoose';
-import {AuthBody} from '../middleware/authMiddleware';
+import {AuthBody} from '../middleware/verifyAuthToken';
 
 import Recipe from '../models/recipe.model';
 import {IRecipe} from '../typings/recipe.types';
@@ -62,7 +62,7 @@ const addRecipe = asyncHandler(
     const recipeObj: Omit<IRecipe, 'createdAt' | 'updatedAt'> = {
       ...req.body,
       title: req.body.title,
-      user: req.body.user.id,
+      user: req.body.user.id!, // Asserting that user will be part of body since if the verifyAuthToken middleware fails, this code will never run
     };
 
     const recipe: HydratedDocument<IRecipe> = await Recipe.create(recipeObj);

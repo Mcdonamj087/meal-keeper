@@ -1,10 +1,9 @@
-import {Response} from 'express';
 import asyncHandler from 'express-async-handler';
-import {HydratedDocument} from 'mongoose';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import {generateAccessToken, generateRefreshToken} from '../helpers/tokens';
+import {HydratedDocument} from 'mongoose';
+import {Request, Response} from 'express';
 import {TypedRequestBody} from '../typings/express.types';
-
 import User, {IUser} from '../models/user.model';
 
 /**
@@ -12,7 +11,7 @@ import User, {IUser} from '../models/user.model';
  * @route   POST /api/users
  * @access  Public
  */
-const registerUser = asyncHandler(
+const register = asyncHandler(
   async (req: TypedRequestBody<IUser>, res: Response) => {
     const {name, email, password} = req.body;
     if (!name || !email || !password) {
@@ -39,11 +38,18 @@ const registerUser = asyncHandler(
     });
 
     if (user) {
+      res.cookie('jwt', generateRefreshToken(user.id), {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
       res.status(201).json({
         _id: user.id,
         name: user.name,
         email: user.email,
-        token: generateToken(user.id),
+        accessToken: generateAccessToken(user.id),
       });
     } else {
       res.status(400);
@@ -57,8 +63,7 @@ const registerUser = asyncHandler(
  * @route   POST /api/users/login
  * @access  Public
  */
-
-const loginUser = asyncHandler(
+const login = asyncHandler(
   async (
     req: TypedRequestBody<{
       email: string;
@@ -76,7 +81,7 @@ const loginUser = asyncHandler(
         _id: user.id,
         name: user.name,
         email: user.email,
-        token: generateToken(user.id),
+        accessToken: generateAccessToken(user.id),
       });
     } else {
       res.status(400);
@@ -84,6 +89,34 @@ const loginUser = asyncHandler(
     }
   }
 );
+
+/**
+ * @desc    Log user out / delete refreshToken cookie
+ * @route   GET /api/users/logout
+ * @access  Public
+ */
+const logout = asyncHandler(async (req: Request, res: Response) => {
+  // On client, also delete the accessToken
+  const cookies = req.cookies;
+  // If no jwt cookie found, then we
+  if (!cookies?.jwt) {
+    res.status(204); // No content
+    throw new Error('Missing refresh token cookie.');
+  }
+
+  const refreshToken = cookies.jwt;
+
+  try {
+    await User.findOneAndUpdate({refreshToken}, {refreshToken: ''});
+
+    res.clearCookie('jwt', {httpOnly: true, secure: true, sameSite: 'none'});
+    res.sendStatus(204); // No Content
+  } catch (error) {
+    console.log(error);
+    res.status(403); // Forbidden
+    throw new Error('Refresh token expired.');
+  }
+});
 
 /**
  * @desc    Get user data
@@ -105,13 +138,9 @@ const getMe = asyncHandler(
   }
 );
 
-// Generate JWT
-function generateToken(id: string) {
-  return jwt.sign({id}, process.env.JWT_SECRET!, {expiresIn: '30d'});
-}
-
 export default {
-  registerUser,
-  loginUser,
+  register,
+  login,
+  logout,
   getMe,
 };

@@ -1,9 +1,11 @@
 import {Schema, model} from 'mongoose';
+import {generateRefreshToken} from '../helpers/tokens';
 
 export interface IUser {
   name: string;
   email: string;
   password: string;
+  refreshToken: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,10 +25,19 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Please add a password'],
     },
+    refreshToken: {
+      type: String,
+      unique: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export default model('User', userSchema);
+userSchema.pre('save', function (next) {
+  this.refreshToken = generateRefreshToken(this.id);
+  next();
+});
+
+export default model<IUser>('User', userSchema);

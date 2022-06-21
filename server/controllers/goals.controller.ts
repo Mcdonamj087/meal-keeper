@@ -1,7 +1,7 @@
 import {Response} from 'express';
 import asyncHandler from 'express-async-handler';
 import {HydratedDocument} from 'mongoose';
-import {AuthBody} from '../middleware/authMiddleware';
+import {AuthBody} from '../middleware/verifyAuthToken';
 
 import Goal, {IGoal} from '../models/goals.model';
 
@@ -34,7 +34,7 @@ const createGoal = asyncHandler(
       throw new Error('Please provide a "text" field');
     }
     const goal: HydratedDocument<IGoal> = await Goal.create({
-      user: req.body.user.id,
+      user: req.body.user.id!, // Asserting that user will be part of body since if the verifyAuthToken middleware fails, this code will never run
       text: req.body.text,
     });
 

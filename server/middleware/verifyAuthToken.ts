@@ -3,36 +3,37 @@ import jwt, {JwtPayload} from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import {TypedRequestBody} from '../typings/express.types';
 import User, {IUser} from '../models/user.model';
+import {ObjectId} from 'mongoose';
 
-type UserNoPassword = Omit<IUser, 'password'> & {id: string};
+type UserNoPassword = Omit<IUser, 'password'> & {id?: string | ObjectId};
 
 export interface AuthBody {
   user: UserNoPassword;
 }
 
-const protect = asyncHandler(
+const verifyAuthToken = asyncHandler(
   async (
     req: TypedRequestBody<AuthBody>,
     res: Response,
     next: NextFunction
   ) => {
     let token: string | undefined;
+    const authHeader = req.headers.authorization;
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
+    if (authHeader && authHeader.startsWith('Bearer')) {
       try {
         // Get token from header
-        token = req.headers.authorization.split(' ')[1];
+        token = authHeader.split(' ')[1];
 
-        // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+        // Verify token. If token is expired, the catch block will execute with error
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!);
 
         // Get user from the token
-        const user: UserNoPassword = await User.findById(
-          (decoded as JwtPayload).id
-        ).select('-password');
+        const user = await User.findById((decoded as JwtPayload).id).select(
+          '-password'
+        );
+
+        console.log(user);
 
         if (!user) {
           res.status(400);
@@ -56,4 +57,4 @@ const protect = asyncHandler(
   }
 );
 
-export default protect;
+export default verifyAuthToken;

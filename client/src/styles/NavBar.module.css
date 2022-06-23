@@ -1,0 +1,39 @@
+.wrapper {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.nav {
+  display: flex;
+  padding: 6px 0;
+}
+
+.link {
+  padding: 0 16px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.link:global(.active):after {
+  content: '';
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color__yellow--dark);
+  position: absolute;
+  bottom: 14px;
+  left: 16px;
+  right: 16px;
+}
+
+.logoLink {
+  display: block;
+  font-size: 0;
+}
+
+.logoLink svg {
+  height: 56px;
+}

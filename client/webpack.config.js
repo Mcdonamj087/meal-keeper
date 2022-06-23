@@ -13,6 +13,7 @@ module.exports = ({NODE_ENV}) => {
     entry: path.resolve(__dirname, './src/index.tsx'),
     output: {
       path: path.resolve(__dirname, './build'),
+      publicPath: '/',
       filename: 'bundle.[contenthash].js',
     },
     mode,
@@ -90,6 +91,7 @@ module.exports = ({NODE_ENV}) => {
       client: {
         overlay: true,
       },
+      historyApiFallback: true, // fall back to index.html when requested route cannot be found
     },
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
     plugins: [

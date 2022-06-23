@@ -1,20 +1,26 @@
-import React from 'react';
-import IMAGE from 'assets/favicon-logo.png';
+import React, {useEffect} from 'react';
+import {Routes, Route} from 'react-router-dom';
 
-import 'styles/index.css';
+import 'styles/global/index.css';
 
-import styles from 'styles.module.css';
-
-import SvgImg from 'assets/svg/safari-pinned-tab.svg';
-
-console.log(styles.background);
+import Home from 'pages/Home';
+import About from 'pages/About';
+import NavBar from 'components/NavBar';
 
 const App = () => {
+  useEffect(() => {
+    /* using global google from gis script loaded to index.html */
+    console.log(window.google);
+  }, []);
+
   return (
-    <div className={styles.background}>
-      <h1>Typescript MERN Boilerplate 2022</h1>
-      <SvgImg />
-    </div>
+    <>
+      <NavBar />
+      <Routes>
+        <Route index element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </>
   );
 };
 

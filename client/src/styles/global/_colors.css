@@ -1,5 +1,6 @@
 /* Colors */
 :root {
+  --color__text--rgb: 15, 15, 15;
   --color__black: #0F0F0F;
   --color__coconut--1: #F7F5F2;
   --color__teal--dark: #2193A4;
@@ -7,6 +8,6 @@
   --color__yellow--dark: #CFC356;
   --color__yellow--regular: #F6E867;
 
-  --color__text--inactive: rgba(15, 15, 15, 0.4);
-  --color__tool--transparent: rgba(15, 15, 15, 0.05);;
+  --color__text--inactive: rgba(var(--color__text--rgb), 0.4);
+  --color__tool--transparent: rgba(var(--color__text--rgb), 0.05);;
 }
